@@ -23,19 +23,51 @@ function buildCharts(sample) {
 
   // @TODO: Use `d3.json` to fetch the sample data for the plots
     d3.json(`/metadata/${sample}`).then((data) => {
+      var otuIds = data.otu_ids;
+      var sampleValues = data.sample_values;
+      var otuLabels = data.otu_labels;
 
 
     // @TODO: Build a Bubble Chart using the sample data
-    var data = [sample];
-    var layout = { margin: { t: 30, b: 100 } };
-    Plotly.plot("bubble", data, layout);
-    });
+    var bubbleLayout = {
+      xaxis: { title: "OTU ID" }
+    };
+    var bubbleData = [
+      {
+        x: otuIds,
+        y: sampleValues,
+        text: otuLabels,
+        mode: "markers",
+        marker: {
+          size: sampleValues,
+          color: otuIds,
+        }
+      }
+    ];
+
+    Plotly.plot("bubble", bubbleData, bubbleLayout);
 
     // @TODO: Build a Pie Chart
     // HINT: You will need to use slice() to grab the top 10 sample_values,
     // otu_ids, and labels (10 each).
     // Plot the default route once the page loads
 
+    var pieData = [
+      {
+        values: sampleValues.slice(0, 10),
+        labels: otuIds.slice(0, 10),
+        hovertext: otuLabels.slice(0, 10),
+        type: "pie"
+      }
+    ];
+
+    var pieLayout = {
+      margin: { t: 0, l: 0 }
+    };
+
+    Plotly.plot("pie", pieData, pieLayout);
+  });
+}
 
     // // Update the plot with new data
     // function updatePlotly(newdata) {
